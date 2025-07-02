@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { FileUpload } from './FileUpload';
 import { FileList } from './FileList';
 import { AnalyticsCharts } from './AnalyticsCharts';
+import { ExcelDataViewer } from './ExcelDataViewer';
 import { toast } from '@/hooks/use-toast';
 import { 
   BarChart3, 
@@ -33,6 +34,7 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [totalFiles, setTotalFiles] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
+  const [selectedFile, setSelectedFile] = useState<FileData | null>(null);
 
   const fetchFiles = async () => {
     if (!user) return;
@@ -150,8 +152,8 @@ export function Dashboard() {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="upload" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
+        <Tabs defaultValue="upload" className="space-y-6" value={selectedFile ? "viewer" : undefined}>
+          <TabsList className="grid w-full grid-cols-4 max-w-lg">
             <TabsTrigger value="upload" className="flex items-center gap-2">
               <Upload className="w-4 h-4" />
               Upload
@@ -164,6 +166,12 @@ export function Dashboard() {
               <BarChart3 className="w-4 h-4" />
               Analytics
             </TabsTrigger>
+            {selectedFile && (
+              <TabsTrigger value="viewer" className="flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4" />
+                Analyze
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="upload" className="space-y-6">
@@ -189,7 +197,11 @@ export function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <FileList files={files} onFileDeleted={fetchFiles} />
+                <FileList 
+                  files={files} 
+                  onFileDeleted={fetchFiles} 
+                  onFileView={setSelectedFile}
+                />
               </CardContent>
             </Card>
           </TabsContent>
@@ -207,6 +219,25 @@ export function Dashboard() {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {selectedFile && (
+            <TabsContent value="viewer" className="space-y-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold">Data Analysis</h2>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSelectedFile(null)}
+                >
+                  Back to Files
+                </Button>
+              </div>
+              <ExcelDataViewer
+                fileId={selectedFile.id}
+                fileName={selectedFile.filename}
+                originalName={selectedFile.original_name}
+              />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
     </div>
