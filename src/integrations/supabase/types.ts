@@ -9,7 +9,107 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      analytics_data: {
+        Row: {
+          created_at: string
+          data: Json
+          file_id: string
+          id: string
+          sheet_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          file_id: string
+          id?: string
+          sheet_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          file_id?: string
+          id?: string
+          sheet_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_data_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "excel_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      excel_files: {
+        Row: {
+          file_path: string
+          file_size: number
+          filename: string
+          id: string
+          original_name: string
+          row_count: number | null
+          sheet_count: number | null
+          status: string | null
+          upload_date: string
+          user_id: string
+        }
+        Insert: {
+          file_path: string
+          file_size: number
+          filename: string
+          id?: string
+          original_name: string
+          row_count?: number | null
+          sheet_count?: number | null
+          status?: string | null
+          upload_date?: string
+          user_id: string
+        }
+        Update: {
+          file_path?: string
+          file_size?: number
+          filename?: string
+          id?: string
+          original_name?: string
+          row_count?: number | null
+          sheet_count?: number | null
+          status?: string | null
+          upload_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
